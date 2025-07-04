@@ -12,25 +12,10 @@ function NavBar({ onThemeToggle, theme }) {
    */
   const [showContact, setShowContact] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showDateDropdown, setShowDateDropdown] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const d = new Date();
-    return d.toISOString().split("T")[0];
-  });
 
   // Handlers for toggling dropdowns
   const toggleContact = () => setShowContact((show) => !show);
   const toggleSettings = () => setShowSettings((show) => !show);
-  const toggleDateDropdown = () => setShowDateDropdown((show) => !show);
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-    setShowDateDropdown(false);
-  };
-
-  // For "Surprise Me" button - just a placeholder click handler
-  const handleSurpriseMe = () => {
-    alert("🎲 Surprise! (This button will bring fun surprises in the full app!)");
-  };
 
   // Styles (playful, light, with blur and gradient, some accent on hover)
   // Palette: #add0d7 (primary), #c4b35f (secondary), #000 (accent)
@@ -112,33 +97,11 @@ function NavBar({ onThemeToggle, theme }) {
     textAlign: "left"
   };
 
-  const dropdownItemHover = {
-    background: "#add0d7",
-    color: "#000",
-    fontWeight: "bold"
-  };
-
-  const specialButtonStyle = {
-    ...linkStyle,
-    background: "#add0d7",
-    color: "#000",
-    fontWeight: 800,
-    border: "2px solid #c4b35f77",
-    boxShadow: "0 2px 8px #c4b35f33",
-    fontSize: "1.31rem",
-    transition: "transform 0.12s, box-shadow 0.2s",
-    marginLeft: 8
-  };
-
   // Responsive hamburger for mobile (not implemented fully, navigation remains visible for simplicity)
   const responsiveStyles = `
     @media (max-width: 800px) {
       .funbase-navbar-list {
         gap: 0.25rem;
-      }
-      .funbase-navbar-surprise {
-        font-size: 1.03rem;
-        padding: 0.31rem 0.67rem;
       }
       .funbase-navbar li {
         font-size: 0.98rem;
@@ -181,7 +144,6 @@ function NavBar({ onThemeToggle, theme }) {
     setTimeout(() => {
       if (dropdown === "contact") setShowContact(false);
       else if (dropdown === "settings") setShowSettings(false);
-      else if (dropdown === "date") setShowDateDropdown(false);
     }, 130);
   };
 
@@ -207,24 +169,6 @@ function NavBar({ onThemeToggle, theme }) {
         FunBase
       </div>
       <ul className="funbase-navbar-list" style={navListStyle}>
-        {/* Home */}
-        <li>
-          <a
-            href="/"
-            style={
-              hovered.home
-                ? { ...linkStyle, ...linkHoverStyle }
-                : linkStyle
-            }
-            className="funbase-navbar-link"
-            onMouseEnter={() => setHovered({ ...hovered, home: true })}
-            onMouseLeave={() => setHovered({ ...hovered, home: false })}
-            aria-label="Home"
-          >
-            <span role="img" aria-label="Home" style={{marginRight: 7}}>🏠</span>
-            Home
-          </a>
-        </li>
         {/* Quotes */}
         <li>
           <a
@@ -279,76 +223,23 @@ function NavBar({ onThemeToggle, theme }) {
             Movies
           </a>
         </li>
-        {/* Trending Fun with date selector */}
-        <li style={{ position: "relative" }}>
-          <div
-            className="funbase-navbar-dropdown"
+        {/* Trending Fun (simplified, no date) */}
+        <li>
+          <a
+            href="/trending"
             style={
               hovered.trending
                 ? { ...linkStyle, ...linkHoverStyle }
                 : linkStyle
             }
-            tabIndex={0}
-            onClick={toggleDateDropdown}
-            onBlur={() => handleBlurDropdown("date")}
+            className="funbase-navbar-link"
             onMouseEnter={() => setHovered({ ...hovered, trending: true })}
             onMouseLeave={() => setHovered({ ...hovered, trending: false })}
             aria-label="Trending Fun"
           >
-            <span role="img" aria-label="Trending Fun" style={{marginRight: 7}}>📅</span>
+            <span role="img" aria-label="Trending Fun" style={{marginRight: 7}}>🔥</span>
             Trending Fun
-            <span style={{ fontSize: "0.87em", marginLeft: 7, color: "#c4b35f" }}>▼</span>
-            <span style={{
-              fontSize: "0.85em",
-              marginLeft: 9,
-              fontWeight: 500,
-              background: "#c4b35f22",
-              borderRadius: 6,
-              padding: "0.15em 0.6em"
-            }}>{selectedDate}</span>
-          </div>
-          {showDateDropdown && (
-            <div
-              className="funbase-navbar-dropdown-menu"
-              style={{ ...dropdownStyle, left: 0, minWidth: 170 }}
-              onMouseLeave={toggleDateDropdown}
-            >
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={handleDateChange}
-                style={{
-                  ...dropdownItemStyle,
-                  margin: "4px 12px",
-                  borderRadius: 6,
-                  border: "1px solid #add0d7",
-                  fontSize: "1rem",
-                  background: "#f8fbfc"
-                }}
-                min="2015-01-01"
-                max={new Date().toISOString().split("T")[0]}
-                aria-label="Pick a Date for Trending Fun"
-              />
-            </div>
-          )}
-        </li>
-        {/* Surprise Me */}
-        <li>
-          <button
-            className="funbase-navbar-surprise"
-            style={
-              hovered.surprise
-                ? { ...specialButtonStyle, ...linkHoverStyle }
-                : specialButtonStyle
-            }
-            onMouseEnter={() => setHovered({ ...hovered, surprise: true })}
-            onMouseLeave={() => setHovered({ ...hovered, surprise: false })}
-            onClick={handleSurpriseMe}
-            aria-label="Surprise Me"
-          >
-            <span role="img" aria-label="Surprise" style={{marginRight: 7}}>🎲</span>
-            Surprise Me
-          </button>
+          </a>
         </li>
         {/* Contact/About Dropdown */}
         <li style={{ position: "relative" }}>
