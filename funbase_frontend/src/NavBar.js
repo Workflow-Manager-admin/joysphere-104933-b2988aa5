@@ -1,24 +1,19 @@
 import React, { useState } from "react";
 
 // PUBLIC_INTERFACE
-function NavBar({ onThemeToggle, theme }) {
+function NavBar() {
   /**
    * Modern, playful navigation bar for FunBase with emoji icons, gradient/blurred background,
-   * dropdowns, and responsive, interactive styling as specified in requirements.
-   * 
-   * Props:
-   *   onThemeToggle (function): callback to toggle light/dark theme
-   *   theme (string): current theme name ("light" or "dark")
+   * single Settings dropdown, and responsive, interactive styling.
+   *
+   * - Contact, About, Feedback, and Help/FAQ are now all under the Settings (⚙️) dropdown.
+   * - Dark mode/theme toggle control has been removed as per requirements.
    */
-  const [showContact, setShowContact] = useState(false);
+
+  // Dropdown visibility state
   const [showSettings, setShowSettings] = useState(false);
 
-  // Handlers for toggling dropdowns
-  const toggleContact = () => setShowContact((show) => !show);
-  const toggleSettings = () => setShowSettings((show) => !show);
-
-  // Styles (playful, light, with blur and gradient, some accent on hover)
-  // Palette: #add0d7 (primary), #c4b35f (secondary), #000 (accent)
+  // Styles
   const navStyle = {
     position: "fixed",
     top: 0,
@@ -26,7 +21,7 @@ function NavBar({ onThemeToggle, theme }) {
     zIndex: 100,
     background: "linear-gradient(90deg, #add0d7 60%, #c4b35f 100%)",
     boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-    backdropFilter: "blur(8px)", // for nice blur effect
+    backdropFilter: "blur(8px)",
     WebkitBackdropFilter: "blur(8px)",
     borderBottom: "2px solid #c4b35f22",
     display: "flex",
@@ -74,7 +69,7 @@ function NavBar({ onThemeToggle, theme }) {
     position: "absolute",
     top: 50,
     left: 0,
-    minWidth: 180,
+    minWidth: 185,
     background: "#ffffffee",
     borderRadius: 12,
     boxShadow: "0 10px 24px #add0d74c",
@@ -97,7 +92,7 @@ function NavBar({ onThemeToggle, theme }) {
     textAlign: "left"
   };
 
-  // Responsive hamburger for mobile (not implemented fully, navigation remains visible for simplicity)
+  // Responsive CSS
   const responsiveStyles = `
     @media (max-width: 800px) {
       .funbase-navbar-list {
@@ -136,18 +131,15 @@ function NavBar({ onThemeToggle, theme }) {
     }
   `;
 
-  // Utility state for hover effect
+  // Hover effect utility
   const [hovered, setHovered] = useState({});
 
-  // Toggle focus/blur for keyboard nav dropdown closing
-  const handleBlurDropdown = (dropdown) => {
-    setTimeout(() => {
-      if (dropdown === "contact") setShowContact(false);
-      else if (dropdown === "settings") setShowSettings(false);
-    }, 130);
+  // Toggle dropdown close on blur for a11y
+  const handleBlurDropdown = () => {
+    setTimeout(() => setShowSettings(false), 130);
   };
 
-  // Nav brand
+  // Nav brand style
   const brandStyle = {
     fontSize: "1.4rem",
     fontWeight: "900",
@@ -160,7 +152,6 @@ function NavBar({ onThemeToggle, theme }) {
     userSelect: "none"
   };
 
-  // Accessibility: aria-label where appropriate; tabIndex for dropdown
   return (
     <nav className="funbase-navbar" style={navStyle}>
       <style>{responsiveStyles}</style>
@@ -241,32 +232,40 @@ function NavBar({ onThemeToggle, theme }) {
             Trending Fun
           </a>
         </li>
-        {/* Contact/About Dropdown */}
+        {/* Single Settings Dropdown */}
         <li style={{ position: "relative" }}>
           <div
             className="funbase-navbar-dropdown"
             style={
-              hovered.contact
+              hovered.settings
                 ? { ...linkStyle, ...linkHoverStyle }
                 : linkStyle
             }
             tabIndex={0}
-            onClick={toggleContact}
-            onBlur={() => handleBlurDropdown("contact")}
-            onMouseEnter={() => setHovered({ ...hovered, contact: true })}
-            onMouseLeave={() => setHovered({ ...hovered, contact: false })}
-            aria-label="Contact or About"
+            onClick={() => setShowSettings((show) => !show)}
+            onBlur={handleBlurDropdown}
+            onMouseEnter={() => setHovered({ ...hovered, settings: true })}
+            onMouseLeave={() => setHovered({ ...hovered, settings: false })}
+            aria-label="Settings"
           >
-            <span role="img" aria-label="About/Contact" style={{marginRight: 7}}>📞</span>
-            Contact/About
+            <span role="img" aria-label="Settings" style={{marginRight: 7}}>⚙️</span>
+            Settings
             <span style={{ fontSize: "0.87em", marginLeft: 7, color: "#c4b35f" }}>▼</span>
           </div>
-          {showContact && (
+          {showSettings && (
             <div
               className="funbase-navbar-dropdown-menu"
               style={{ ...dropdownStyle, left: 0 }}
-              onMouseLeave={toggleContact}
+              onMouseLeave={() => setShowSettings(false)}
             >
+              <a
+                href="/help"
+                style={dropdownItemStyle}
+                onMouseOver={e => (e.target.style.background = "#add0d7")}
+                onMouseOut={e => (e.target.style.background = "transparent")}
+              >
+                FAQ / Help
+              </a>
               <a
                 href="/about"
                 style={dropdownItemStyle}
@@ -282,70 +281,6 @@ function NavBar({ onThemeToggle, theme }) {
                 onMouseOut={e => (e.target.style.background = "transparent")}
               >
                 Contact
-              </a>
-              <a
-                href="/feedback"
-                style={dropdownItemStyle}
-                onMouseOver={e => (e.target.style.background = "#add0d7")}
-                onMouseOut={e => (e.target.style.background = "transparent")}
-              >
-                Feedback
-              </a>
-            </div>
-          )}
-        </li>
-        {/* Settings Dropdown */}
-        <li style={{ position: "relative" }}>
-          <div
-            className="funbase-navbar-dropdown"
-            style={
-              hovered.settings
-                ? { ...linkStyle, ...linkHoverStyle }
-                : linkStyle
-            }
-            tabIndex={0}
-            onClick={toggleSettings}
-            onBlur={() => handleBlurDropdown("settings")}
-            onMouseEnter={() => setHovered({ ...hovered, settings: true })}
-            onMouseLeave={() => setHovered({ ...hovered, settings: false })}
-            aria-label="Settings"
-          >
-            <span role="img" aria-label="Settings" style={{marginRight: 7}}>⚙️</span>
-            Settings
-            <span style={{ fontSize: "0.87em", marginLeft: 7, color: "#c4b35f" }}>▼</span>
-          </div>
-          {showSettings && (
-            <div
-              className="funbase-navbar-dropdown-menu"
-              style={{ ...dropdownStyle, left: 0 }}
-              onMouseLeave={toggleSettings}
-            >
-              <button
-                style={{
-                  ...dropdownItemStyle,
-                  display: "flex",
-                  alignItems: "center",
-                  border: "none",
-                  fontSize: "1rem",
-                  fontWeight: "bold"
-                }}
-                onClick={() => {
-                  onThemeToggle && onThemeToggle();
-                  setShowSettings(false);
-                }}
-                onMouseOver={e => (e.target.style.background = "#add0d7")}
-                onMouseOut={e => (e.target.style.background = "transparent")}
-                aria-label="Toggle Theme"
-              >
-                {theme === "light" ? "🌙" : "☀️"} Theme: {theme === "light" ? "Dark" : "Light"}
-              </button>
-              <a
-                href="/help"
-                style={dropdownItemStyle}
-                onMouseOver={e => (e.target.style.background = "#add0d7")}
-                onMouseOut={e => (e.target.style.background = "transparent")}
-              >
-                FAQ / Help
               </a>
               <a
                 href="/feedback"
